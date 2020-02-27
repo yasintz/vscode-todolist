@@ -1,0 +1,141 @@
+{
+  "name": "vscode-todo-list",
+  "displayName": "vscode-todo-list",
+  "description": "Todo app for vscode",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.42.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vs-todo-list",
+          "title": "Todo List",
+          "icon": "resources/todo.svg"
+        }
+      ]
+    },
+    "views": {
+      "vs-todo-list": [
+        {
+          "id": "todolistExtension:view",
+          "name": "All Todos"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "todolistExtension.createTodoList",
+        "title": "Create todo list file in .vscode directory"
+      },
+      {
+        "command": "todolistExtension.refreshEntry",
+        "title": "TodoList: Refresh",
+        "icon": {
+          "light": "resources/light/boolean.svg",
+          "dark": "resources/dark/boolean.svg"
+        }
+      },
+      {
+        "command": "todolistExtension.addEntry",
+        "title": "TodoList: Add",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "todolistExtension.editEntry",
+        "title": "TodoList: Edit",
+        "icon": {
+          "light": "resources/light/edit.svg",
+          "dark": "resources/dark/edit.svg"
+        }
+      },
+      {
+        "command": "todolistExtension.openWebView",
+        "title": "TodoList: Open UI",
+        "icon": {
+          "light": "resources/light/folder.svg",
+          "dark": "resources/dark/folder.svg"
+        }
+      },
+      {
+        "command": "todolistExtension.deleteEntry",
+        "title": "TodoList: Delete"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "todolistExtension.addEntry",
+          "when": "view == todolistExtension",
+          "group": "navigation"
+        },
+        {
+          "command": "todolistExtension.refreshEntry",
+          "when": "view == todolistExtension",
+          "group": "navigation"
+        },
+        {
+          "command": "todolistExtension.openWebView",
+          "when": "view == todolistExtension",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "todolistExtension.editEntry",
+          "when": "view == todolistExtension && viewItem == dependency",
+          "group": "inline"
+        },
+        {
+          "command": "todolistExtension.deleteEntry",
+          "when": "view == todolistExtension && viewItem == dependency"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "build:ui": "rollup -c",
+    "compile": "tsc -p ./",
+    "lint": "eslint src --ext ts",
+    "watch": "tsc -watch -p ./",
+    "pretest": "yarn run compile && yarn run lint",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/mocha": "^7.0.1",
+    "@types/node": "^12.11.7",
+    "@types/vscode": "^1.42.0",
+    "eslint": "^6.8.0",
+    "@typescript-eslint/parser": "^2.18.0",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "glob": "^7.1.6",
+    "mocha": "^7.0.1",
+    "typescript": "^3.7.5",
+    "vscode-test": "^1.3.0",
+    "@rollup/plugin-commonjs": "^11.0.0",
+    "@rollup/plugin-node-resolve": "^7.0.0",
+    "clean-css": "^4.2.3",
+    "node-sass": "^4.13.1",
+    "rollup": "^1.20.0",
+    "rollup-plugin-livereload": "^1.0.0",
+    "rollup-plugin-svelte": "^5.0.3",
+    "rollup-plugin-terser": "^5.1.2",
+    "svelte": "^3.0.0",
+    "sirv-cli": "^0.4.4",
+    "svelte-preprocess-sass": "^0.2.0",
+    "svelte-preprocess": "^3.4.0"
+  }
+}

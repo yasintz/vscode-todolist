@@ -60,10 +60,10 @@ function createStore() {
   function getHtml() {
     var { styles } = new CleanCSS().minify(`${store.css}\n${GLOBAL_CSS}`);
     const bundleJs = fs.readFileSync(PATHS.BUNDLE_JS, "utf-8");
-    return HTML_TEMPLATE.replace(
-      "<!---js--->",
-      `<script>${bundleJs}</script>`
-    ).replace("<!---css--->", `<style>${styles}</style>`);
+    return HTML_TEMPLATE.split("<!---js--->")
+      .join(`<script>${bundleJs}</script>`)
+      .split("<!---css--->")
+      .join(`<style>${styles}</style>`);
   }
 
   function onBuildEnd() {

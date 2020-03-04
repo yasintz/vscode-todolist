@@ -68,7 +68,7 @@
     },
     "commands": [
       {
-        "command": "todolistExtension.createTodoList",
+        "command": "todolistExtension.createTodoListFile",
         "title": "Create todo list file in .vscode directory"
       },
       {
@@ -123,17 +123,17 @@
       "view/item/context": [
         {
           "command": "todolistExtension.addTodoItem",
-          "when": "view == todolistExtension:view && (viewItem == vstodolistproject) || (viewItem == vstodolisttitle)",
+          "when": "view == todolistExtension:view && viewItem == vstodolistproject || viewItem == vstodolisttitle",
           "group": "inline"
         },
         {
           "command": "todolistExtension.refreshAll",
-          "when": "view == todolistExtension:view && (viewItem == vstodolistproject && viewItem == vstodolisttitle)",
+          "when": "view == todolistExtension:view && viewItem == vstodolistproject",
           "group": "inline"
         },
         {
           "command": "todolistExtension.openUi",
-          "when": "(view == todolistExtension:view)",
+          "when": "view == todolistExtension:view && viewItem == vstodolistproject",
           "group": "inline"
         },
         {

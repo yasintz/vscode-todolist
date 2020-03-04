@@ -24,7 +24,6 @@ function openWebView(context: TodoContext, props: TodoListUiData) {
     undefined,
     context.vscodeContext.subscriptions
   );
-  console.log(panel.webview.html);
   return panel;
 }
 

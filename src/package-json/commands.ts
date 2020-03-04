@@ -5,7 +5,7 @@ const icon = (name: string) => ({
 
 const commands = {
   CREATE_TODO_LIST: {
-    command: "todolistExtension.createTodoList",
+    command: "todolistExtension.createTodoListFile",
     title: "Create todo list file in .vscode directory"
   },
   REFRESH_ALL: {

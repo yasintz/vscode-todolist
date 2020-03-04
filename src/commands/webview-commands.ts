@@ -1,4 +1,3 @@
-import * as vscode from "vscode";
 import { TodoContext } from "../helpers";
 
 interface Req {
@@ -15,7 +14,10 @@ export default (key: string, req: Req, send: (d: any) => void) =>
   callbacks[key](req, send);
 
 register("log", ({ ctx, params: data }, send) => {
-  console.log(data);
+  console.log({
+    info: "from ui",
+    data
+  });
   send(true);
 });
 

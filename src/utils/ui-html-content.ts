@@ -1,11 +1,13 @@
 import * as fs from "fs";
 import { uiHmtlPath } from "./paths";
+import { Line } from "./note-parse";
 export enum UI_PAGE_TYPE {
   TODO_LIST = "TODO_LIST"
 }
 
 export interface TodoListUiData {
   page: UI_PAGE_TYPE;
+  project: Line;
 }
 
 export default (data: TodoListUiData) =>

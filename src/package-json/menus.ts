@@ -20,10 +20,6 @@ const orm = (condition: Orm): OrmObj => ({
   toString: () => condition.toString()
 });
 
-/*
-(  (a && (b || c) && d)  ) && !f && false && true || !(g != e)
-*/
-
 const viewTitle = [
   {
     command: commands.REFRESH_ALL.command,
@@ -46,7 +42,7 @@ const viewItemContext = [
   },
   {
     command: commands.OPEN_TODO_UI.command,
-    when: orm(isTodoView)
+    when: orm(isTodoView).and(isProject)
   },
   {
     command: commands.EDIT_TODO_ITEM.command,

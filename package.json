@@ -13,99 +13,9 @@
     "*"
   ],
   "main": "./out/extension.js",
-  "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "vs-todo-list",
-          "title": "Todo List",
-          "icon": "resources/todo.svg"
-        }
-      ]
-    },
-    "views": {
-      "vs-todo-list": [
-        {
-          "id": "todolistExtension:view",
-          "name": "All Todos"
-        }
-      ]
-    },
-    "commands": [
-      {
-        "command": "todolistExtension.createTodoList",
-        "title": "Create todo list file in .vscode directory"
-      },
-      {
-        "command": "todolistExtension.refreshEntry",
-        "title": "TodoList: Refresh",
-        "icon": {
-          "light": "resources/light/boolean.svg",
-          "dark": "resources/dark/boolean.svg"
-        }
-      },
-      {
-        "command": "todolistExtension.addEntry",
-        "title": "TodoList: Add",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
-        "command": "todolistExtension.editEntry",
-        "title": "TodoList: Edit",
-        "icon": {
-          "light": "resources/light/edit.svg",
-          "dark": "resources/dark/edit.svg"
-        }
-      },
-      {
-        "command": "todolistExtension.openWebView",
-        "title": "TodoList: Open UI",
-        "icon": {
-          "light": "resources/light/folder.svg",
-          "dark": "resources/dark/folder.svg"
-        }
-      },
-      {
-        "command": "todolistExtension.deleteEntry",
-        "title": "TodoList: Delete"
-      }
-    ],
-    "menus": {
-      "view/title": [
-        {
-          "command": "todolistExtension.addEntry",
-          "when": "view == todolistExtension",
-          "group": "navigation"
-        },
-        {
-          "command": "todolistExtension.refreshEntry",
-          "when": "view == todolistExtension",
-          "group": "navigation"
-        },
-        {
-          "command": "todolistExtension.openWebView",
-          "when": "view == todolistExtension",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "todolistExtension.editEntry",
-          "when": "view == todolistExtension && viewItem == dependency",
-          "group": "inline"
-        },
-        {
-          "command": "todolistExtension.deleteEntry",
-          "when": "view == todolistExtension && viewItem == dependency"
-        }
-      ]
-    }
-  },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
+    "build:package": "yarn compile && node out/package-json/index.js",
     "build:ui": "rollup -c",
     "compile": "tsc -p ./",
     "lint": "eslint src --ext ts",
@@ -137,5 +47,106 @@
     "sirv-cli": "^0.4.4",
     "svelte-preprocess-sass": "^0.2.0",
     "svelte-preprocess": "^3.4.0"
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vs-todo-list",
+          "title": "Todo List",
+          "icon": "resources/activity-bar-item.svg"
+        }
+      ]
+    },
+    "views": {
+      "vs-todo-list": [
+        {
+          "id": "todolistExtension:view",
+          "name": "All Todos"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "todolistExtension.createTodoList",
+        "title": "Create todo list file in .vscode directory"
+      },
+      {
+        "command": "todolistExtension.refreshAll",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "todolistExtension.addTodoItem",
+        "title": "Add",
+        "icon": {
+          "light": "resources/light/add.svg",
+          "dark": "resources/dark/add.svg"
+        }
+      },
+      {
+        "command": "todolistExtension.editTodoItem",
+        "title": "Edit",
+        "icon": {
+          "light": "resources/light/edit.svg",
+          "dark": "resources/dark/edit.svg"
+        }
+      },
+      {
+        "command": "todolistExtension.openUi",
+        "title": "Open UI",
+        "icon": {
+          "light": "resources/light/ui.svg",
+          "dark": "resources/dark/ui.svg"
+        }
+      },
+      {
+        "command": "todolistExtension.deleteTodoItem",
+        "title": "Delete",
+        "icon": {
+          "light": "resources/light/delete.svg",
+          "dark": "resources/dark/delete.svg"
+        }
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "todolistExtension.refreshAll",
+          "when": "view == todolistExtension:view",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "todolistExtension.addTodoItem",
+          "when": "view == todolistExtension:view && (viewItem == vstodolistproject) || (viewItem == vstodolisttitle)",
+          "group": "inline"
+        },
+        {
+          "command": "todolistExtension.refreshAll",
+          "when": "view == todolistExtension:view && (viewItem == vstodolistproject && viewItem == vstodolisttitle)",
+          "group": "inline"
+        },
+        {
+          "command": "todolistExtension.openUi",
+          "when": "(view == todolistExtension:view)",
+          "group": "inline"
+        },
+        {
+          "command": "todolistExtension.editTodoItem",
+          "when": "view == todolistExtension:view && viewItem == vstodolisttodo",
+          "group": "inline"
+        },
+        {
+          "command": "todolistExtension.deleteTodoItem",
+          "when": "view == todolistExtension:view && viewItem == vstodolisttodo",
+          "group": "inline"
+        }
+      ]
+    }
   }
 }

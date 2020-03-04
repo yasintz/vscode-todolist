@@ -6,11 +6,18 @@ import TodoListViewItemProvider from "./tree-view/all-todos";
 import { TodoContext } from "./helpers";
 
 export function activate(context: vscode.ExtensionContext) {
-  const todolistFile = new TodoListFile();
-  const todoContext: TodoContext = { todolistFile, vscodeContext: context };
+  const { workspaceFolders } = vscode.workspace;
+  if (workspaceFolders) {
+    const todoContext: TodoContext = {
+      todolistFiles: workspaceFolders.map(
+        workspaceFolderLocation => new TodoListFile(workspaceFolderLocation)
+      ),
+      vscodeContext: context
+    };
 
-  registerStore(todoContext);
-  TodoListViewItemProvider.create(todoContext);
+    registerStore(todoContext);
+    TodoListViewItemProvider.create(todoContext);
+  }
 }
 
 // this method is called when your extension is deactivated

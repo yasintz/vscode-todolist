@@ -1,103 +1,134 @@
 export enum LineType {
-  Title,
-  Todo,
-  Undef
+  Title = "vstodolisttitle",
+  Todo = "vstodolisttodo",
+  Description = "vstodolistdescription",
+  Project = "vstodolistproject",
+  Undef = "vstodolistundef"
 }
 
 export interface Line {
-  index: number;
   text: string;
   depth: number;
   type: LineType;
-  childs: Line[];
+  lines: Line[];
+  descriptions: Line[];
 }
+const PREFIXES: Record<LineType, string> = {
+  [LineType.Title]: "#",
+  [LineType.Todo]: "-",
+  [LineType.Description]: "*",
+  [LineType.Project]: "$",
+  [LineType.Undef]: "&&"
+};
 
-function isTitle(text: string) {
-  return text.trim()[0] === "#";
-}
+function getType(text: string): LineType {
+  const val = Object.entries(PREFIXES).find(
+    ([key, value]) => value === text.trim()[0]
+  );
+  if (val) {
+    return val[0] as LineType;
+  }
 
-function isTodo(text: string) {
-  return text.trim()[0] === "-";
+  return LineType.Undef;
 }
 
 function getDepth(text: string, type: LineType): number {
-  if (type === LineType.Title) {
-    return text.split("#")[0].length / 2;
-  } else if (type === LineType.Todo) {
-    return text.split("-")[0].length / 2;
-  }
-  return 0;
+  return text.split(PREFIXES[type])[0].length / 2;
 }
 
 function lineToString(line: Line): string {
-  const spaces = new Array(line.depth * 2).fill(" ").join("");
-  if (line.type === LineType.Todo) {
-    return `${spaces}- ${line.text}\n`;
-  }
-  return `${spaces}# ${line.text}\n${line.childs.map(lineToString).join("")}`;
+  const isProject = line.type === LineType.Project;
+  const spaceLenght = isProject ? 0 : line.depth * 2;
+  const spaces = new Array(spaceLenght).fill(" ").join("");
+  const start = `${spaces}${PREFIXES[line.type]}`;
+  const lineText = `${start} ${line.text}\n`;
+  const descriptions = line.descriptions.map(lineToString).join("\n");
+  const childs = line.lines.map(lineToString).join("\n");
+  return `${isProject ? "" : lineText}${descriptions}\n${childs}`;
 }
 
 function createLines(todoList: string) {
   return todoList
     .split("\n")
     .filter(line => line.trim())
-    .map((text, index) => {
-      const type: LineType = isTitle(text)
-        ? LineType.Title
-        : isTodo(text)
-        ? LineType.Todo
-        : LineType.Undef;
+    .map(text => {
+      const type: LineType = getType(text);
       const depth = getDepth(text, type);
 
       return {
-        index,
         text: text
           .trim()
           .substring(1)
           .trim(),
         type,
         depth,
-        childs: []
+        lines: [],
+        descriptions: []
       };
-    });
+    })
+    .filter(item => item.type !== LineType.Undef);
 }
 
-function noteParse(todoList: string) {
+function noteParse(todoList: string, projectName: string) {
   const lines: Line[] = createLines(todoList);
+  const lasts: Line[] = [
+    {
+      text: projectName,
+      depth: -1,
+      type: LineType.Project,
+      lines: [],
+      descriptions: []
+    }
+  ];
 
-  const mains: Line[] = [];
-
-  const parents: Line[] = [];
-  const lastParent = () => parents[parents.length - 1];
+  const getLast = () => lasts[lasts.length - 1];
+  const pushToChild = (line: Line) => {
+    const last = getLast();
+    if (line.type === LineType.Description) {
+      last.descriptions.push(line);
+    } else {
+      last.lines.push(line);
+    }
+  };
 
   function saveItem(line: Line) {
-    if (line.depth === 0) {
-      mains.push(line);
-    } else {
-      const lp = lastParent();
+    const last = getLast();
+    const isParent =
+      line.type === LineType.Title || line.type === LineType.Todo;
 
-      if (line.depth > lp.depth) {
-        lp.childs.push(line);
-      } else if (line.depth === lp.depth) {
-        parents.pop();
-        const prev = lastParent();
-        if (prev) {
-          prev.childs.push(line);
-        }
-      } else {
-        parents.pop();
-        saveItem(line);
-      }
+    const isCorrectParent = line.depth > last.depth;
+    const lastIsTitleOrProject =
+      last.type === LineType.Title || last.type === LineType.Project;
+
+    if (lastIsTitleOrProject && isCorrectParent) {
+      line.depth = last.depth + 1;
+
+      pushToChild(line);
+
+      isParent && lasts.push(line);
+
+      return;
     }
-    if (line.type === LineType.Title) {
-      parents.push(line);
+
+    if (
+      last.type === LineType.Todo &&
+      line.type === LineType.Description &&
+      isCorrectParent
+    ) {
+      line.depth = last.depth + 1;
+      pushToChild(line);
+
+      return;
     }
+
+    lasts.pop();
+    saveItem(line);
   }
 
   lines.forEach(line => saveItem(line));
-
-  mains.toString = () => mains.map(lineToString).join("");
-  return mains;
+  const project = lasts[0];
+  project.toString = () => lineToString(project);
+  return project;
 }
 
 export default noteParse;

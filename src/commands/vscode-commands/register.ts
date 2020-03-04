@@ -6,7 +6,7 @@ import openWebView from "../../utils/open-webview";
 //#region createTodoList
 register("createTodoList", context => {
   try {
-    context.todolistFile.createTodoFile();
+    // context.todolistFiles[0].createTodoFile();
   } catch (error) {
     vscode.window.showInformationMessage(error.message);
   }

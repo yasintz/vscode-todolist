@@ -21,7 +21,9 @@ class AllTodosProvider implements vscode.TreeDataProvider<TreeTodoItem> {
   private todos: Line[];
 
   constructor(public readonly ctx: TodoContext) {
-    this.todos = ctx.todolistFile.getTodos();
+    this.todos = ctx.todolistFiles
+      .map(item => item.getTodos())
+      .filter(item => Boolean(item)) as Line[];
   }
 
   refresh = (): void => {
@@ -34,17 +36,13 @@ class AllTodosProvider implements vscode.TreeDataProvider<TreeTodoItem> {
 
   getChildren = (element?: TreeTodoItem): Thenable<TreeTodoItem[]> => {
     if (element) {
-      return Promise.resolve(element?.note.childs.map(this.getItem));
+      return Promise.resolve(element.note.lines.map(this.getItem));
     } else {
       return Promise.resolve(this.todos.map(this.getItem));
     }
   };
   getItem = (note: Line): TreeTodoItem => {
-    return new TreeTodoItem(
-      note,
-      Boolean(note.childs && note.childs.length),
-      this.ctx
-    );
+    return new TreeTodoItem(note, Boolean(note.lines.length), this.ctx);
   };
 }
 

@@ -12,6 +12,20 @@
 
 Bu extension `.vscode/todolist` dosyasini alir ve onu isler proje genelinde yapmak istediginiz isleri bu dosyaya belirli bir formatta girmeniz halinde proje size bir panel sunar ve bunlari sirali bir sekilde gorursunuz
 
+Ornek Dosya
+```
+# Example Title
+  * Title Description
+  * Title Other Description
+
+  - Todo
+    * Description 
+
+# Other Example Title
+  - Other Todo 
+    * Description 
+```
+
 ## Prerequisites
 
 - vscode ^1.42.0

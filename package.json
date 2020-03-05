@@ -30,6 +30,13 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "package": "vsce package"
   },
+  "repository": {
+    "url": "https://github.com/yasintz/vscode-todolist.git",
+    "type": "git"
+  },
+  "bugs": {
+    "url": "https://github.com/yasintz/vscode-todolist/issues"
+  },
   "devDependencies": {
     "@types/mocha": "^7.0.1",
     "@types/node": "^13.7.7",

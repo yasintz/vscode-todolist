@@ -28,7 +28,8 @@
     "watch:extension": "tsc --watch",
     "watch:views": "webpack -w -p",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "package": "vsce package"
+    "package": "vsce package",
+    "install-extension": "yarn run package && node scripts/install.js"
   },
   "repository": {
     "url": "https://github.com/yasintz/vscode-todolist.git",

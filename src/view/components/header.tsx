@@ -6,6 +6,7 @@ interface HeaderProps {
 }
 
 function Header(props: HeaderProps) {
+  return null;
   return <div>Header</div>;
 }
 

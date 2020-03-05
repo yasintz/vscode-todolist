@@ -1,5 +1,5 @@
 import { Api } from "../../helpers";
-import { TodoListUiData } from "../../utils/open-webview";
+import { TodoListUiData } from "../../react-panel";
 
 interface VSCODE {
   acquire: {

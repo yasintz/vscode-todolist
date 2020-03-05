@@ -8,11 +8,18 @@ import { TodoContext } from "./helpers";
 export function activate(context: vscode.ExtensionContext) {
   const { workspaceFolders } = vscode.workspace;
   if (workspaceFolders) {
+    const todolistFiles = workspaceFolders.map(
+      workspaceFolderLocation => new TodoListFile(workspaceFolderLocation)
+    );
     const todoContext: TodoContext = {
-      todolistFiles: workspaceFolders.map(
-        workspaceFolderLocation => new TodoListFile(workspaceFolderLocation)
-      ),
-      vscodeContext: context
+      todolistFiles,
+      vscodeContext: context,
+      updateTodoListFile: id => {
+        const selectedProject = todolistFiles.find(item => item.id === id);
+        if (selectedProject) {
+          selectedProject.clear();
+        }
+      }
     };
 
     registerStore(todoContext);

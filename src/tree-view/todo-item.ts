@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { TodoContext } from "../helpers";
-import { Line, LineType } from "../utils/note-parse";
+import { TodoFileLine, LineType } from "../utils/note-parse";
 const ICON_MAP: Record<LineType, string> = {
   [LineType.Project]: "project",
   [LineType.Title]: "title",
@@ -16,21 +16,21 @@ const icon = (extensionPath: string, name: string) => ({
 
 export class TreeTodoItem extends vscode.TreeItem {
   constructor(
-    public readonly note: Line,
+    public readonly todoLine: TodoFileLine,
     public readonly isCollapsed: boolean,
-    public readonly ctx: TodoContext
+    private readonly ctx: TodoContext
   ) {
     super(
-      note.text,
+      todoLine.text,
       isCollapsed
         ? vscode.TreeItemCollapsibleState.Collapsed
         : vscode.TreeItemCollapsibleState.None
     );
 
-    this.contextValue = note.type;
+    this.contextValue = todoLine.type;
   }
 
   get iconPath() {
-    return icon(this.ctx.vscodeContext.extensionPath, ICON_MAP[this.note.type]);
+    return icon(this.ctx.vscodeContext.extensionPath, ICON_MAP[this.todoLine.type]);
   }
 }

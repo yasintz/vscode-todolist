@@ -1,5 +1,7 @@
 {
   "name": "vscode-todo-list",
+  "publisher": "yasintz",
+  "license": "MIT",
   "displayName": "vscode-todo-list",
   "description": "Todo app for vscode",
   "version": "0.0.1",
@@ -14,39 +16,44 @@
   ],
   "main": "./out/extension.js",
   "scripts": {
+    "build:package": "node out/package-json/index.js",
     "vscode:prepublish": "yarn run compile",
-    "build:package": "yarn compile && node out/package-json/index.js",
-    "build:ui": "rollup -c",
-    "compile": "tsc -p ./",
     "lint": "eslint src --ext ts",
-    "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile && yarn run lint",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "compile": "npm-run-all compile:* && yarn build:package",
+    "compile:extension": "tsc",
+    "compile:views": "webpack -p",
+    "watch": "npm-run-all -p watch:*",
+    "watch:extension": "tsc --watch",
+    "watch:views": "webpack -w -p",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "package": "vsce package"
   },
   "devDependencies": {
-    "@types/glob": "^7.1.1",
     "@types/mocha": "^7.0.1",
-    "@types/node": "^12.11.7",
-    "@types/vscode": "^1.42.0",
-    "eslint": "^6.8.0",
-    "@typescript-eslint/parser": "^2.18.0",
+    "@types/node": "^13.7.7",
+    "@types/react": "^16.9.23",
+    "@types/react-dom": "^16.9.5",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
-    "glob": "^7.1.6",
-    "mocha": "^7.0.1",
-    "typescript": "^3.7.5",
+    "@typescript-eslint/parser": "^2.18.0",
+    "css-loader": "^3.4.2",
+    "eslint": "^6.8.0",
+    "less": "^3.11.1",
+    "less-loader": "^5.0.0",
+    "npm-run-all": "^4.1.5",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "style-loader": "^1.1.3",
+    "styled-components": "^5.0.1",
+    "ts-import-plugin": "^1.6.5",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.8.3",
+    "vsce": "^1.74.0",
+    "vscode": "^1.1.36",
     "vscode-test": "^1.3.0",
-    "@rollup/plugin-commonjs": "^11.0.0",
-    "@rollup/plugin-node-resolve": "^7.0.0",
-    "clean-css": "^4.2.3",
-    "node-sass": "^4.13.1",
-    "rollup": "^1.20.0",
-    "rollup-plugin-livereload": "^1.0.0",
-    "rollup-plugin-svelte": "^5.0.3",
-    "rollup-plugin-terser": "^5.1.2",
-    "svelte": "^3.0.0",
-    "sirv-cli": "^0.4.4",
-    "svelte-preprocess-sass": "^0.2.0",
-    "svelte-preprocess": "^3.4.0"
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
   },
   "contributes": {
     "viewsContainers": {
@@ -113,37 +120,16 @@
       }
     ],
     "menus": {
-      "view/title": [
-        {
-          "command": "todolistExtension.refreshAll",
-          "when": "view == todolistExtension:view",
-          "group": "navigation"
-        }
-      ],
+      "view/title": [],
       "view/item/context": [
         {
-          "command": "todolistExtension.addTodoItem",
-          "when": "view == todolistExtension:view && viewItem == vstodolistproject || viewItem == vstodolisttitle",
+          "command": "todolistExtension.openUi",
+          "when": "view == todolistExtension:view",
           "group": "inline"
         },
         {
           "command": "todolistExtension.refreshAll",
           "when": "view == todolistExtension:view && viewItem == vstodolistproject",
-          "group": "inline"
-        },
-        {
-          "command": "todolistExtension.openUi",
-          "when": "view == todolistExtension:view && viewItem == vstodolistproject",
-          "group": "inline"
-        },
-        {
-          "command": "todolistExtension.editTodoItem",
-          "when": "view == todolistExtension:view && viewItem == vstodolisttodo",
-          "group": "inline"
-        },
-        {
-          "command": "todolistExtension.deleteTodoItem",
-          "when": "view == todolistExtension:view && viewItem == vstodolisttodo",
           "group": "inline"
         }
       ]

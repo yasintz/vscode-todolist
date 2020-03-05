@@ -6,12 +6,14 @@ export enum LineType {
   Undef = "vstodolistundef"
 }
 
-export interface Line {
+export interface TodoFileLine {
+  id: string;
+  projectId: string;
   text: string;
   depth: number;
   type: LineType;
-  lines: Line[];
-  descriptions: Line[];
+  lines: TodoFileLine[];
+  descriptions: TodoFileLine[];
 }
 const PREFIXES: Record<LineType, string> = {
   [LineType.Title]: "#",
@@ -36,7 +38,7 @@ function getDepth(text: string, type: LineType): number {
   return text.split(PREFIXES[type])[0].length / 2;
 }
 
-function lineToString(line: Line): string {
+function lineToString(line: TodoFileLine): string {
   const isProject = line.type === LineType.Project;
   const spaceLenght = isProject ? 0 : line.depth * 2;
   const spaces = new Array(spaceLenght).fill(" ").join("");
@@ -47,7 +49,8 @@ function lineToString(line: Line): string {
   return `${isProject ? "" : lineText}${descriptions}\n${childs}`;
 }
 
-function createLines(todoList: string) {
+let count = 0;
+function createLines(todoList: string, projectId: string): TodoFileLine[] {
   return todoList
     .split("\n")
     .filter(line => line.trim())
@@ -56,6 +59,8 @@ function createLines(todoList: string) {
       const depth = getDepth(text, type);
 
       return {
+        id: `${text.replace(/\s/g, "")}${count++}`,
+        projectId,
         text: text
           .trim()
           .substring(1)
@@ -70,19 +75,22 @@ function createLines(todoList: string) {
 }
 
 function noteParse(todoList: string, projectName: string) {
-  const lines: Line[] = createLines(todoList);
-  const lasts: Line[] = [
-    {
-      text: projectName,
-      depth: -1,
-      type: LineType.Project,
-      lines: [],
-      descriptions: []
-    }
-  ];
+  const projectId = `${projectName}${count++}`;
+  const project: TodoFileLine = {
+    projectId: projectId,
+    id: projectId,
+    text: projectName,
+    depth: -1,
+    type: LineType.Project,
+    lines: [],
+    descriptions: []
+  };
+
+  const lines: TodoFileLine[] = createLines(todoList, project.id);
+  const lasts: TodoFileLine[] = [project];
 
   const getLast = () => lasts[lasts.length - 1];
-  const pushToChild = (line: Line) => {
+  const pushToChild = (line: TodoFileLine) => {
     const last = getLast();
     if (line.type === LineType.Description) {
       last.descriptions.push(line);
@@ -91,7 +99,7 @@ function noteParse(todoList: string, projectName: string) {
     }
   };
 
-  function saveItem(line: Line) {
+  function saveItem(line: TodoFileLine) {
     const last = getLast();
     const isParent =
       line.type === LineType.Title || line.type === LineType.Todo;
@@ -126,7 +134,6 @@ function noteParse(todoList: string, projectName: string) {
   }
 
   lines.forEach(line => saveItem(line));
-  const project = lasts[0];
   project.toString = () => lineToString(project);
   return project;
 }

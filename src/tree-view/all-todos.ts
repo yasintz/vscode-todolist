@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
 import { TreeTodoItem } from "./todo-item";
-import { TodoItem } from "../models/note";
 import { TodoContext } from "../helpers";
-import { Line } from "../utils/note-parse";
+import { TodoFileLine } from "../utils/note-parse";
 
 class AllTodosProvider implements vscode.TreeDataProvider<TreeTodoItem> {
   static create = (ctx: TodoContext) => {
@@ -18,12 +17,12 @@ class AllTodosProvider implements vscode.TreeDataProvider<TreeTodoItem> {
   readonly onDidChangeTreeData: vscode.Event<TreeTodoItem | undefined> = this
     ._onDidChangeTreeData.event;
 
-  private todos: Line[];
+  private todos: TodoFileLine[];
 
   constructor(public readonly ctx: TodoContext) {
     this.todos = ctx.todolistFiles
       .map(item => item.getTodos())
-      .filter(item => Boolean(item)) as Line[];
+      .filter(item => Boolean(item)) as TodoFileLine[];
   }
 
   refresh = (): void => {
@@ -36,12 +35,12 @@ class AllTodosProvider implements vscode.TreeDataProvider<TreeTodoItem> {
 
   getChildren = (element?: TreeTodoItem): Thenable<TreeTodoItem[]> => {
     if (element) {
-      return Promise.resolve(element.note.lines.map(this.getItem));
+      return Promise.resolve(element.todoLine.lines.map(this.getItem));
     } else {
       return Promise.resolve(this.todos.map(this.getItem));
     }
   };
-  getItem = (note: Line): TreeTodoItem => {
+  getItem = (note: TodoFileLine): TreeTodoItem => {
     return new TreeTodoItem(note, Boolean(note.lines.length), this.ctx);
   };
 }

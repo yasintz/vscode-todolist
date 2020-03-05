@@ -1,32 +1,41 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
-import noteParse, { Line } from "./note-parse";
+import noteParse, { TodoFileLine } from "./note-parse";
 
-class App {
+class TodoListFile {
   private _projectRoot: string;
+  private _filePath: string;
+  public id: string = "";
+  private _project: TodoFileLine | undefined;
   constructor(workspaceFolder: vscode.WorkspaceFolder) {
     this._projectRoot = workspaceFolder.uri.fsPath;
-  }
-
-  get filePath() {
-    return path.join(this._projectRoot, ".vscode", "todolist");
+    this._filePath = path.join(this._projectRoot, ".vscode", "todolist");
   }
 
   createTodoFile = async () => {
-    this.makeFileSync(this.filePath);
+    this.makeFileSync(this._filePath);
   };
 
-  getTodos = (): Line | undefined => {
-    try {
-      const fileContent = fs.readFileSync(this.filePath, "UTF-8");
-      return noteParse(
-        fileContent,
-        this._projectRoot.split(path.sep).pop() as string
-      );
-    } catch (error) {
-      console.log(error);
+  clear = () => {
+    this._project = undefined;
+  };
+
+  getTodos = (): TodoFileLine | undefined => {
+    if (!this._project) {
+      try {
+        const fileContent = fs.readFileSync(this._filePath, "UTF-8");
+        this._project = noteParse(
+          fileContent,
+          this._projectRoot.split(path.sep).pop() as string
+        );
+        this.id = this._project.id;
+      } catch (error) {
+        console.log(error);
+      }
     }
+
+    return this._project;
   };
 
   private makeDirSync(dir: string) {
@@ -48,4 +57,4 @@ class App {
   }
 }
 
-export default App;
+export default TodoListFile;
